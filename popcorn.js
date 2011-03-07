@@ -22,31 +22,42 @@
     return new Popcorn.p.init( entity );
   };
   
-  Popcorn.instances = [];
+  Popcorn.instances = []; 
+  
   Popcorn.instanceIds = {};
   
-  Popcorn.removeInstance = function(id) {
+  Popcorn.id = null;
+  
+  Popcorn.removeInstance = function( popcornInstance ) {
     //  If called prior to any instances being created
     //  Return early to avoid splicing on nothing
     if ( !Popcorn.instances.length ) {
+      
       return;
-    }
-  
-    Popcorn.instances.splice( Popcorn.instanceIds[ id ], 1 );
-
-    delete Popcorn.instanceIds[ id ];
     
+    }
+
+    Popcorn.instances.splice( Popcorn.instanceIds[ popcornInstance.id ], 1 );
+
+    delete Popcorn.instanceIds[ popcornInstance.id ];
+
   };
 
   //addes a Popcorn instance to the Popcorn instance array
   Popcorn.addInstance = function(popcornInstance) {
-    if (!popcornInstance.video.id ) { 
+    if ( !popcornInstance.video.id ) { 
     
-      popcornInstance.video.id = "__popcorn" + Popcorn.instances.length;
+      popcornInstance.id = "__popcorn" + Popcorn.instances.length;
     
     }
     
-    Popcorn.instanceIds[popcornInstance.video.id] = Popcorn.instances.length;
+    else {
+    
+      popcornInstance.id = popcornInstance.video.id;
+    
+    }
+    
+    Popcorn.instanceIds[popcornInstance.id] = Popcorn.instances.length;
     
     Popcorn.instances.push(popcornInstance);
     
@@ -54,7 +65,9 @@
 
   //User passes in the name of the Popcorn instance and receive a popcorn object
   Popcorn.getInstanceById = function(name) {
+  
     return Popcorn.instances[Popcorn.instanceIds[name]];
+  
   };
   
   
